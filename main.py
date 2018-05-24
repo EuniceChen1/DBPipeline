@@ -17,7 +17,7 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
         self.setupUi(self)
         self.setGeometry( 500,500,383,430 )
         self.setWindowTitle("PITA")
-        self.setWindowIcon(QtGui.QIcon(r'C:\mnt\animation\Pipeline\icons\favicon.ico')) 
+        self.setWindowIcon(QtGui.QIcon(r'C:\Pipeline\icons\favicon.ico')) 
         
         self.numOfSeqBox.returnPressed.connect(self.sequenceTree)
         
