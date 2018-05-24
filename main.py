@@ -17,7 +17,7 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
         self.setupUi(self)
         self.setGeometry( 500,500,383,430 )
         self.setWindowTitle("PITA")
-        self.setWindowIcon(QtGui.QIcon(r'C:\Pipeline\icons\favicon.ico')) 
+        self.setWindowIcon(QtGui.QIcon(r'C:\mnt\animation\Pipeline\icons\favicon.ico')) 
         
         self.numOfSeqBox.returnPressed.connect(self.sequenceTree)
         
@@ -34,8 +34,9 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
         self.sqName=[]
         for q in xrange(int(self.seqNum)):
             q = q+1
-            self.sqList.append(os.path.join('sc'+'%03d'%q))
-            self.sqName.append(QtGui.QTreeWidgetItem(self.seqTree,['%03d'%q]))
+            self.sqList.append(os.path.join('%03d'%q))
+            self.sqName.append(QtGui.QTreeWidgetItem(self.seqTree,['sq'+'%03d'%q]))
+
             
         self.seqTree.expandItem(QtGui.QTreeWidgetItem(self.sqName))
         self.seqTree.addTopLevelItems(self.sqName)
@@ -44,20 +45,21 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
         self.noSubItem = self.subItemBox.text()
         assert self.noSubItem.isdigit(), "Must be a number!!"
         selectedItems = self.seqTree.selectedItems()
-        scnName = []
-        shtName = []
+        self.scnName = []
+        self.shtName = []
         if selectedItems[0].childCount() == 0:
             if len(selectedItems) > 0:
                 
                 for i in xrange(int(self.noSubItem)):
                     i = i+1
-                    
                     if "sc" not in selectedItems[0].text(0):
                         selectedItems[0].addChild(QtGui.QTreeWidgetItem([('sc'+'%03d'%i)]))
+                        self.scnName.append(QtGui.QTreeWidgetItem([('sc'+'%03d'%i)]).text(0))
                         continue
                         
                     else:
                         QtGui.QTreeWidgetItem(selectedItems[0],[('sh'+'%03d'%i)])
+                        self.shtName.append(QtGui.QTreeWidgetItem([('sh'+'%03d'%i)]).text(0))
             else:
                 assert (len(selectedItems) > 0), "Nothing is selected!"
                 
@@ -68,10 +70,10 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
                     k = k + 1
                     if "sc" not in selectedItems[0].text(0):
                         selectedItems[0].addChild(QtGui.QTreeWidgetItem([('sc'+'%03d'%k)]))
+                        self.scnName.append(QtGui.QTreeWidgetItem([('sc'+'%03d'%i)]).text(0))
                         continue
                     else:
-                        
-                        QtGui.QTreeWidgetItem(selectedItems[0],[('sh'+'%03d'%k)])
+                        self.shtName.append(QtGui.QTreeWidgetItem(selectedItems[0],[('sh'+'%03d'%k)]))
             else:
                 assert (len(selectedItems) > 0), "Nothing is selected!"
 
@@ -93,12 +95,28 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
 
 ##            keep_running = True
 ##            while(keep_running):
-##            for i in self.sqList:
-##                print i.items()
             
-            print self.seqTree.itemWidget(0,QtGui.QTreeWidgetItem.child(0))
-                
-              
+            for j in self.sqName:
+                #print "sequence :",j.text(0)
+                for scItem in range(0,j.childCount()):
+                    scItem = scItem + 1
+                    if j.child(scItem-1).text(0) != None:
+                        #print "scene :",j.child(scItem-1).text(0)
+                        scene = j.child(scItem-1)
+                        
+                        for shItem in range(0,scene.childCount()):
+                            shItem = shItem + 1
+                            if scene.child(shItem-1).text(0) != None:
+                                #print "shot :", scene.child(shItem-1).text(0)
+                                shot = scene.child(shItem-1)
+
+                                wr.writerow({
+                                            fieldnames[0]:j.text(0),
+                                            fieldnames[1]:scene.text(0),
+                                            fieldnames[2]:shot.text(0)
+                                            })
+                    
+
 
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
