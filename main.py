@@ -12,11 +12,11 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
         uifile = QFile(r"C:\mnt\animation\Pipeline\ui\createCSV.ui")
         uifile.open(QFile.ReadOnly)
         self.ui = loader.load(uifile,self)
-        uifile.close()
         self.setupUi(self)
         self.setGeometry( 500,500,383,430 )
         self.setWindowTitle("PITA")
         self.setWindowIcon(QtGui.QIcon(r'C:\mnt\animation\Pipeline\icons\favicon.ico'))
+        uifile.close()
 
         #DISABLE EVERYTHING UNLESS PROJECT NAME IS TYPED
         self.numOfSeqBox.setEnabled(0)
@@ -34,7 +34,7 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
         self.submitBt.clicked.connect(self.onSubmit)
         self.cancelBt.clicked.connect(self.onCancel)
         self.resetBt.clicked.connect(self.onReset)
-        self.projNameBox.returnPressed.connect(self.projName)
+        self.projNameBox.textChanged.connect(self.projName)
 
     def projName(self):
         if len(self.projNameBox.text()) != 0:
@@ -254,7 +254,6 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
 
     def onReset(self):
         self.seqTree.clear()
-
     
 
 if __name__ == "__main__":
