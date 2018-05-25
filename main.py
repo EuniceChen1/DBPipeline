@@ -46,7 +46,9 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
         
         self.sqList = []
         self.seqNum = self.numOfSeqBox.text()
-        assert self.seqNum.isdigit(), "Must be a number!!"
+        if self.seqNum.isdigit() == False:
+            self.mustBeDigit()
+            assert self.seqNum.isdigit(), "Must be a number!!"
         self.sqName=[]
         if self.seqNum != "0":
             if self.seqTree.topLevelItemCount() == 0:
@@ -215,7 +217,7 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
                 replyBox.setText("Just Kidding ;)")
                 replyBox.setInformativeText("Your data has been submitted. \n \n A CSV file has been generated in your local drive.")
                 reply = replyBox.exec_()
-            self.close()
+            
             
         elif response == QtGui.QMessageBox.No:
             msgBox = QtGui.QMessageBox()
@@ -256,6 +258,8 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
             print "Choose wisely" #This should not happen
 
     def onReset(self):
+        self.projNameBox.clear()
+        self.numOfSeqBox.clear()
         self.seqTree.clear()
 
     def ntgSelected(self):
@@ -270,7 +274,7 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
 
     def mustBeDigit(self):
         """
-        Show Input error message
+        Show Nothing selected message
         """
         msgBox = QtGui.QMessageBox()
         msgBox.setIcon(QtGui.QMessageBox.Warning)
