@@ -270,7 +270,7 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
 
     def mustBeDigit(self):
         """
-        Show Nothing selected message
+        Show Input error message
         """
         msgBox = QtGui.QMessageBox()
         msgBox.setIcon(QtGui.QMessageBox.Warning)
