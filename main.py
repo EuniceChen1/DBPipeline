@@ -16,8 +16,17 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
         self.setupUi(self)
         self.setGeometry( 500,500,383,430 )
         self.setWindowTitle("PITA")
-        self.setWindowIcon(QtGui.QIcon(r'C:\mnt\animation\Pipeline\icons\favicon.ico')) 
+        self.setWindowIcon(QtGui.QIcon(r'C:\mnt\animation\Pipeline\icons\favicon.ico'))
 
+        #DISABLE EVERYTHING UNLESS PROJECT NAME IS TYPED
+        self.numOfSeqBox.setEnabled(0)
+        self.addSelectedBt.setEnabled(0)
+        self.removeBt.setEnabled(0)
+        self.seqTree.setEnabled(0)
+        self.submitBt.setEnabled(0)
+        self.cancelBt.setEnabled(0)
+        self.resetBt.setEnabled(0)
+        
         #CONNECTIONS
         self.numOfSeqBox.returnPressed.connect(self.sequenceTree)
         self.addSelectedBt.clicked.connect(self.addSelBt)
@@ -25,8 +34,20 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
         self.submitBt.clicked.connect(self.onSubmit)
         self.cancelBt.clicked.connect(self.onCancel)
         self.resetBt.clicked.connect(self.onReset)
+        self.projNameBox.returnPressed.connect(self.projName)
+
+    def projName(self):
+        if len(self.projNameBox.text()) != 0:
+            self.numOfSeqBox.setEnabled(1)
+            self.addSelectedBt.setEnabled(1)
+            self.removeBt.setEnabled(1)
+            self.seqTree.setEnabled(1)
+            self.submitBt.setEnabled(1)
+            self.cancelBt.setEnabled(1)
+            self.resetBt.setEnabled(1)
     
     def sequenceTree(self):
+        
         self.sqList = []
         self.seqNum = self.numOfSeqBox.text()
         assert self.seqNum.isdigit(), "Must be a number!!"
@@ -233,19 +254,6 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
 
     def onReset(self):
         self.seqTree.clear()
-
-    count = 10
-    def countdown():
-        global count
-        if count < 1:
-            count = 10
-        now = datetime.datetime.now()
-        msgBox = QtGui.QMessageBox()
-        msgBox.setWindowTitle("Warning")
-        msgBox.setIcon(QtGui.QMessageBox.Warning)
-        msgBox.setText('Restarting Windows in %s'%count)
-        count = count - 1
-        response = msgBox.exec_()
 
     
 
