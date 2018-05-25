@@ -2,21 +2,17 @@ import os
 import sys
 from PySide.QtCore import *
 from PySide import QtGui, QtUiTools
-from createUi import Ui_MainWindow
+from main_ui import Ui_MainWindow
 import csv
 
 class Window(QtGui.QMainWindow,Ui_MainWindow):
     def __init__(self,parent=None):
         super(Window, self).__init__(parent)
-        loader = QtUiTools.QUiLoader()
-        uifile = QFile(r"C:\mnt\animation\Pipeline\ui\createCSV.ui")
-        uifile.open(QFile.ReadOnly)
-        self.ui = loader.load(uifile,self)
         self.setupUi(self)
         self.setGeometry( 500,500,383,430 )
-        self.setWindowTitle("PITA")
-        self.setWindowIcon(QtGui.QIcon(r'C:\mnt\animation\Pipeline\icons\favicon.ico'))
-        uifile.close()
+        self.setWindowTitle("Sequence Handler")
+        self.setWindowIcon(QtGui.QIcon(r'C:\Users\Eunice Chen\Pictures\pythonlogo.png'))
+        #self.seqTree.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
 
         #DISABLE EVERYTHING UNLESS PROJECT NAME IS TYPED
         self.numOfSeqBox.setEnabled(0)
@@ -79,25 +75,30 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
             self.seqTree.sortItems(0,Qt.SortOrder(0))
 
     def addSelBt(self):
-        self.noSubItem = self.subItemBox.text()
-        assert self.noSubItem.isdigit(), "Must be a number!!"
-        selectedItems = self.seqTree.selectedItems()
         #self.scnName = []
         #self.shtName = []
+        self.noSubItem = self.subItemBox.text()
+        if self.noSubItem.isdigit() == False:
+            self.mustBeDigit()
+            assert (self.noSubItem.isdigit()), "Must be a number!!"
+            
+        selectedItems = self.seqTree.selectedItems()
         if selectedItems[0].childCount() == 0:
             if len(selectedItems) > 0:
                 
                 for i in xrange(int(self.noSubItem)):
                     i = i+1
-                    if "sc" not in selectedItems[0].text(0):
+                    if "sc" not in selectedItems[0].text(0) and "sh" not in selectedItems[0].text(0):
                         selectedItems[0].addChild(QtGui.QTreeWidgetItem([('sc'+'%03d'%i)]))
                         #self.scnName.append(QtGui.QTreeWidgetItem([('sc'+'%03d'%i)]).text(0))
                         continue
                         
                     else:
-                        QtGui.QTreeWidgetItem(selectedItems[0],[('sh'+'%03d'%i)])
+                        if "sh" not in selectedItems[0].text(0):
+                            QtGui.QTreeWidgetItem(selectedItems[0],[('sh'+'%03d'%i)])
                         #self.shtName.append(QtGui.QTreeWidgetItem([('sh'+'%03d'%i)]).text(0))
             else:
+                self.ntgSelected()
                 assert (len(selectedItems) > 0), "Nothing is selected!"
                 
         else:
@@ -109,12 +110,12 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
                     if "sc" not in selectedItems[0].text(0):
                         selectedItems[0].addChild(QtGui.QTreeWidgetItem([('sc'+'%03d'%k)]))
                         #self.scnName.append(QtGui.QTreeWidgetItem([('sc'+'%03d'%k)]).text(0))
-                        
                         continue
                     else:
                         QtGui.QTreeWidgetItem(selectedItems[0],[('sh'+'%03d'%k)])
                         #self.shtName.append(QtGui.QTreeWidgetItem(selectedItems[0],[('sh'+'%03d'%k)]))
             else:
+                self.ntgSelected()
                 assert (len(selectedItems) > 0), "Nothing is selected!"
 
     def clearBt(self):
@@ -122,7 +123,9 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
         if len(selectedRemove) > 0:
             selectedRemove[0].takeChildren()
         else:
+            self.ntgSelected()
             assert (len(selectedRemove) > 0), "Nothing is selected!"
+            
 
     def makeCSV(self):
         sq=[]
@@ -210,7 +213,7 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
                 replyBox.setWindowTitle("Information")
                 replyBox.setIcon(QtGui.QMessageBox.Information)
                 replyBox.setText("Just Kidding ;)")
-                replyBox.setInformativeText("Your data has been submitted. \n A CSV file has been generated in your local drive.")
+                replyBox.setInformativeText("Your data has been submitted. \n \n A CSV file has been generated in your local drive.")
                 reply = replyBox.exec_()
             self.close()
             
@@ -254,6 +257,26 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
 
     def onReset(self):
         self.seqTree.clear()
+
+    def ntgSelected(self):
+        """
+        Show Nothing selected message
+        """
+        msgBox = QtGui.QMessageBox()
+        msgBox.setIcon(QtGui.QMessageBox.Warning)
+        msgBox.setWindowTitle("Alert!")
+        msgBox.setText("Nothing is selected!!")
+        response = msgBox.exec_()
+
+    def mustBeDigit(self):
+        """
+        Show Nothing selected message
+        """
+        msgBox = QtGui.QMessageBox()
+        msgBox.setIcon(QtGui.QMessageBox.Warning)
+        msgBox.setWindowTitle("Alert!")
+        msgBox.setText("Input must be a number!!")
+        response = msgBox.exec_()
     
 
 if __name__ == "__main__":
