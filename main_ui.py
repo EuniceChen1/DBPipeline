@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'D:\Pipeline\createCSV.ui'
 #
-# Created: Wed May 23 15:01:30 2018
+# Created: Fri May 25 12:23:03 2018
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,11 @@ from PySide import QtCore, QtGui
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(405, 426)
+        MainWindow.resize(381, 435)
+        MainWindow.setMinimumSize(QtCore.QSize(381, 435))
+        MainWindow.setMaximumSize(QtCore.QSize(381, 435))
+        MainWindow.setToolTip("")
+        MainWindow.setStatusTip("")
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.seqTree = QtGui.QTreeWidget(self.centralwidget)
@@ -27,18 +31,6 @@ class Ui_MainWindow(object):
         self.seqTree.header().setHighlightSections(True)
         self.seqTree.header().setSortIndicatorShown(True)
         self.seqTree.header().setStretchLastSection(True)
-        self.horizontalLayoutWidget_3 = QtGui.QWidget(self.centralwidget)
-        self.horizontalLayoutWidget_3.setGeometry(QtCore.QRect(110, 370, 160, 31))
-        self.horizontalLayoutWidget_3.setObjectName("horizontalLayoutWidget_3")
-        self.horizontalLayout_3 = QtGui.QHBoxLayout(self.horizontalLayoutWidget_3)
-        self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        self.submitBt = QtGui.QPushButton(self.horizontalLayoutWidget_3)
-        self.submitBt.setObjectName("submitBt")
-        self.horizontalLayout_3.addWidget(self.submitBt)
-        self.cancelBt = QtGui.QPushButton(self.horizontalLayoutWidget_3)
-        self.cancelBt.setObjectName("cancelBt")
-        self.horizontalLayout_3.addWidget(self.cancelBt)
         self.gridLayoutWidget = QtGui.QWidget(self.centralwidget)
         self.gridLayoutWidget.setGeometry(QtCore.QRect(10, 10, 361, 61))
         self.gridLayoutWidget.setObjectName("gridLayoutWidget")
@@ -76,6 +68,25 @@ class Ui_MainWindow(object):
         self.removeBt = QtGui.QPushButton(self.gridLayoutWidget_2)
         self.removeBt.setObjectName("removeBt")
         self.gridLayout_2.addWidget(self.removeBt, 0, 3, 1, 1)
+        self.gridLayoutWidget_3 = QtGui.QWidget(self.centralwidget)
+        self.gridLayoutWidget_3.setGeometry(QtCore.QRect(8, 370, 361, 29))
+        self.gridLayoutWidget_3.setObjectName("gridLayoutWidget_3")
+        self.gridLayout_3 = QtGui.QGridLayout(self.gridLayoutWidget_3)
+        self.gridLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.gridLayout_3.setObjectName("gridLayout_3")
+        spacerItem = QtGui.QSpacerItem(48, 26, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout_3.addItem(spacerItem, 0, 0, 1, 1)
+        self.cancelBt = QtGui.QPushButton(self.gridLayoutWidget_3)
+        self.cancelBt.setObjectName("cancelBt")
+        self.gridLayout_3.addWidget(self.cancelBt, 0, 2, 1, 1)
+        self.resetBt = QtGui.QPushButton(self.gridLayoutWidget_3)
+        self.resetBt.setObjectName("resetBt")
+        self.gridLayout_3.addWidget(self.resetBt, 0, 3, 1, 1)
+        self.submitBt = QtGui.QPushButton(self.gridLayoutWidget_3)
+        self.submitBt.setObjectName("submitBt")
+        self.gridLayout_3.addWidget(self.submitBt, 0, 1, 1, 1)
+        spacerItem1 = QtGui.QSpacerItem(48, 26, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.gridLayout_3.addItem(spacerItem1, 0, 4, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtGui.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -88,11 +99,12 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
         self.seqTree.setSortingEnabled(True)
         self.seqTree.headerItem().setText(0, QtGui.QApplication.translate("MainWindow", "Sequence", None, QtGui.QApplication.UnicodeUTF8))
-        self.submitBt.setText(QtGui.QApplication.translate("MainWindow", "Submit", None, QtGui.QApplication.UnicodeUTF8))
-        self.cancelBt.setText(QtGui.QApplication.translate("MainWindow", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
         self.projNameLabel.setText(QtGui.QApplication.translate("MainWindow", "Enter Project Name:", None, QtGui.QApplication.UnicodeUTF8))
         self.numOfSeqLabel.setText(QtGui.QApplication.translate("MainWindow", "Number of Sequences: ", None, QtGui.QApplication.UnicodeUTF8))
         self.addSelectedBt.setText(QtGui.QApplication.translate("MainWindow", "Add To Selected", None, QtGui.QApplication.UnicodeUTF8))
         self.subItemLabel.setText(QtGui.QApplication.translate("MainWindow", "Add no. of sub items : ", None, QtGui.QApplication.UnicodeUTF8))
         self.removeBt.setText(QtGui.QApplication.translate("MainWindow", "Remove Child", None, QtGui.QApplication.UnicodeUTF8))
+        self.cancelBt.setText(QtGui.QApplication.translate("MainWindow", "Cancel", None, QtGui.QApplication.UnicodeUTF8))
+        self.resetBt.setText(QtGui.QApplication.translate("MainWindow", "Reset", None, QtGui.QApplication.UnicodeUTF8))
+        self.submitBt.setText(QtGui.QApplication.translate("MainWindow", "Submit", None, QtGui.QApplication.UnicodeUTF8))
 
