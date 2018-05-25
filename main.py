@@ -92,7 +92,6 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
     def makeCSV(self):
         sq=[]
         outputFileA = os.path.join("D:\\"+"temp"+".csv")
-        header = ["Sequence","Scene","Shot"]
         with open(outputFileA,'wb') as g:
             fieldnames = ["Sequence","Scene","Shot"]
             wr = csv.DictWriter(g,fieldnames=fieldnames)
@@ -100,21 +99,36 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
 
             for j in self.sqName:
                 sq.append(j.text(0).split("q")[-1])
-                for scItem in range(0,j.childCount()):
-                    scItem = scItem + 1
-                    if j.child(scItem-1).text(0) != None:
-                        scene = j.child(scItem-1)
-                        
-                        for shItem in range(0,scene.childCount()):
-                            shItem = shItem + 1
-                            if scene.child(shItem-1).text(0) != None:
-                                shot = scene.child(shItem-1)
+                if j.childCount() != 0:
+                    for scItem in range(0,j.childCount()):
+                        scItem = scItem + 1
+                        if j.child(scItem-1).text(0) != None:
+                            scene = j.child(scItem-1)
+                            if scene.childCount() != 0:
+                                for shItem in range(0,scene.childCount()):
+                                    shItem = shItem + 1
+                                    if scene.child(shItem-1).text(0) != None:
+                                        shot = scene.child(shItem-1)
 
+                                        wr.writerow({
+                                                    fieldnames[0]:j.text(0).split("q")[-1],
+                                                    fieldnames[1]:scene.text(0).split("c")[-1],
+                                                    fieldnames[2]:shot.text(0)
+                                                    })
+                            else:
                                 wr.writerow({
                                             fieldnames[0]:j.text(0).split("q")[-1],
                                             fieldnames[1]:scene.text(0).split("c")[-1],
-                                            fieldnames[2]:shot.text(0)
+                                            fieldnames[2]:""
                                             })
+                else:
+                    wr.writerow({
+                                fieldnames[0]:j.text(0).split("q")[-1],
+                                fieldnames[1]:"",
+                                fieldnames[2]:""
+                                })
+
+                            
                                 
         projName = self.projNameBox.text()
         outputFileB = os.path.join("D:\\"+projName+"_"+"tacticData"+".csv")
@@ -155,6 +169,7 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
             msgBox.setText("Your data has been submitted!")
             msgBox.setInformativeText("A CSV file has been generated in your local drive.")
             response = msgBox.exec_()
+            self.close()
             
         elif response == QtGui.QMessageBox.No:
             msgBox = QtGui.QMessageBox()
