@@ -5,12 +5,11 @@ from PySide import QtGui, QtUiTools
 from createUi import Ui_MainWindow
 import csv
 
-
 class Window(QtGui.QMainWindow,Ui_MainWindow):
     def __init__(self,parent=None):
         super(Window, self).__init__(parent)
         loader = QtUiTools.QUiLoader()
-        uifile = QFile(r"D:\Pipeline\createCSV.ui")
+        uifile = QFile(r"C:\mnt\animation\Pipeline\ui\createCSV.ui")
         uifile.open(QFile.ReadOnly)
         self.ui = loader.load(uifile,self)
         uifile.close()
@@ -18,29 +17,34 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
         self.setGeometry( 500,500,383,430 )
         self.setWindowTitle("PITA")
         self.setWindowIcon(QtGui.QIcon(r'C:\mnt\animation\Pipeline\icons\favicon.ico')) 
-        
+
+        #CONNECTIONS
         self.numOfSeqBox.returnPressed.connect(self.sequenceTree)
-        
         self.addSelectedBt.clicked.connect(self.addSelBt)
-
         self.removeBt.clicked.connect(self.clearBt)
-
-        self.submitBt.clicked.connect(self.makeCSV)
+        self.submitBt.clicked.connect(self.onSubmit)
+        self.cancelBt.clicked.connect(self.onCancel)
+        self.resetBt.clicked.connect(self.onReset)
     
     def sequenceTree(self):
         self.sqList = []
         self.seqNum = self.numOfSeqBox.text()
         assert self.seqNum.isdigit(), "Must be a number!!"
         self.sqName=[]
-        for q in xrange(int(self.seqNum)):
-            q = q+1
-            self.sqList.append(os.path.join('%03d'%q))
-            self.sqName.append(QtGui.QTreeWidgetItem(self.seqTree,['sq'+'%03d'%q]))
-
+        if self.seqNum != "0":
+            for q in xrange(int(self.seqNum)):
+                q = q+1
+                self.sqList.append(os.path.join('%03d'%q))
+                self.sqName.append(QtGui.QTreeWidgetItem(self.seqTree,['sq'+'%03d'%q]))
+            self.seqTree.expandItem(QtGui.QTreeWidgetItem(self.sqName))
+            self.seqTree.addTopLevelItems(self.sqName)
+            self.seqTree.sortItems(0,Qt.SortOrder(0))
             
-        self.seqTree.expandItem(QtGui.QTreeWidgetItem(self.sqName))
-        self.seqTree.addTopLevelItems(self.sqName)
-        self.seqTree.sortItems(0,Qt.SortOrder(0))
+        else:
+            self.sqName.append(QtGui.QTreeWidgetItem(self.seqTree,['sq000']))
+            self.seqTree.expandItem(QtGui.QTreeWidgetItem(self.sqName))
+            self.seqTree.addTopLevelItems(self.sqName)
+            self.seqTree.sortItems(0,Qt.SortOrder(0))
 
     def addSelBt(self):
         self.noSubItem = self.subItemBox.text()
@@ -114,9 +118,6 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
                                 
         projName = self.projNameBox.text()
         outputFileB = os.path.join("D:\\"+projName+"_"+"tacticData"+".csv")
-        print len(sq)
-        print len(self.sqList)
-        print len(self.scnName)
         
         with open(outputFileA,'r') as inf:
             with open(outputFileB,'wb') as outf:
@@ -133,7 +134,62 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
                     outf.write(reader[ind])
                     
         os.remove(outputFileA)
-                            
+
+    def onSubmit(self):
+        """
+        Show Submit question message
+        """
+        msgBox = QtGui.QMessageBox()
+        msgBox.setIcon(QtGui.QMessageBox.Question)
+        msgBox.setWindowTitle("Confirm")
+        msgBox.setText("Are you sure you want to submit?")
+        msgBox.setStandardButtons(QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+        msgBox.setDefaultButton(QtGui.QMessageBox.Yes)
+        response = msgBox.exec_()
+
+        if response == QtGui.QMessageBox.Yes:
+            self.makeCSV()
+            msgBox = QtGui.QMessageBox()
+            msgBox.setWindowTitle("Information")
+            msgBox.setIcon(QtGui.QMessageBox.Information)
+            msgBox.setText("Your data has been submitted!")
+            msgBox.setInformativeText("A CSV file has been generated in your local drive.")
+            response = msgBox.exec_()
+            
+        elif response == QtGui.QMessageBox.No:
+            msgBox = QtGui.QMessageBox()
+            msgBox.setWindowTitle("Warning")
+            msgBox.setIcon(QtGui.QMessageBox.Warning)
+            msgBox.setText("You're fired!")
+            response = msgBox.exec_()
+        else:
+            print "Choose wisely" #This should not happen
+            
+    def onCancel(self):
+        """
+        Show Cancel question message
+        """
+        msgBox = QtGui.QMessageBox()
+        msgBox.setIcon(QtGui.QMessageBox.Question)
+        msgBox.setWindowTitle("Warning")
+        msgBox.setText("Are you sure you want to quit?")
+        msgBox.setStandardButtons(QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+        msgBox.setDefaultButton(QtGui.QMessageBox.Yes)
+        response = msgBox.exec_()
+
+        if response == QtGui.QMessageBox.Yes:
+            self.close()
+        elif response == QtGui.QMessageBox.No:
+            msgBox = QtGui.QMessageBox()
+            msgBox.setWindowTitle("Warning")
+            msgBox.setIcon(QtGui.QMessageBox.Warning)
+            msgBox.setText("You're fired!")
+            response = msgBox.exec_()
+        else:
+            print "Choose wisely" #This should not happen
+
+    def onReset(self):
+        self.seqTree.clear()
 
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
