@@ -32,13 +32,24 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
         assert self.seqNum.isdigit(), "Must be a number!!"
         self.sqName=[]
         if self.seqNum != "0":
-            for q in xrange(int(self.seqNum)):
-                q = q+1
-                self.sqList.append(os.path.join('%03d'%q))
-                self.sqName.append(QtGui.QTreeWidgetItem(self.seqTree,['sq'+'%03d'%q]))
-            self.seqTree.expandItem(QtGui.QTreeWidgetItem(self.sqName))
-            self.seqTree.addTopLevelItems(self.sqName)
-            self.seqTree.sortItems(0,Qt.SortOrder(0))
+            if self.seqTree.topLevelItemCount() == 0:
+                for q in xrange(int(self.seqNum)):
+                    q = q+1
+                    self.sqList.append(os.path.join('%03d'%q))
+                    self.sqName.append(QtGui.QTreeWidgetItem(self.seqTree,['sq'+'%03d'%q]))
+                    
+                self.seqTree.expandItem(QtGui.QTreeWidgetItem(self.sqName))
+                self.seqTree.addTopLevelItems(self.sqName)
+                self.seqTree.sortItems(0,Qt.SortOrder(0))
+            else:
+                numOfTopLevelItems = self.seqTree.topLevelItemCount()
+                for m in xrange(int(self.seqNum)):
+                    topItem = m + numOfTopLevelItems
+                    topItem = topItem + 1
+                    self.sqName.append(QtGui.QTreeWidgetItem(self.seqTree,['sq'+'%03d'%topItem]))
+                self.seqTree.expandItem(QtGui.QTreeWidgetItem(self.sqName))
+                self.seqTree.addTopLevelItems(self.sqName)
+                self.seqTree.sortItems(0,Qt.SortOrder(0))
             
         else:
             self.sqName.append(QtGui.QTreeWidgetItem(self.seqTree,['sq000']))
@@ -50,8 +61,8 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
         self.noSubItem = self.subItemBox.text()
         assert self.noSubItem.isdigit(), "Must be a number!!"
         selectedItems = self.seqTree.selectedItems()
-        self.scnName = []
-        self.shtName = []
+        #self.scnName = []
+        #self.shtName = []
         if selectedItems[0].childCount() == 0:
             if len(selectedItems) > 0:
                 
@@ -59,26 +70,29 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
                     i = i+1
                     if "sc" not in selectedItems[0].text(0):
                         selectedItems[0].addChild(QtGui.QTreeWidgetItem([('sc'+'%03d'%i)]))
-                        self.scnName.append(QtGui.QTreeWidgetItem([('sc'+'%03d'%i)]).text(0))
+                        #self.scnName.append(QtGui.QTreeWidgetItem([('sc'+'%03d'%i)]).text(0))
                         continue
                         
                     else:
                         QtGui.QTreeWidgetItem(selectedItems[0],[('sh'+'%03d'%i)])
-                        self.shtName.append(QtGui.QTreeWidgetItem([('sh'+'%03d'%i)]).text(0))
+                        #self.shtName.append(QtGui.QTreeWidgetItem([('sh'+'%03d'%i)]).text(0))
             else:
                 assert (len(selectedItems) > 0), "Nothing is selected!"
                 
         else:
             if len(selectedItems) > 0:
+                numOfChild = selectedItems[0].childCount()
                 for j in xrange(int(self.noSubItem)):
-                    k = j + int((selectedItems[0].child(j).text(0))[-1])
+                    k = j + numOfChild #int((selectedItems[0].child(j).text(0))[-1])
                     k = k + 1
                     if "sc" not in selectedItems[0].text(0):
                         selectedItems[0].addChild(QtGui.QTreeWidgetItem([('sc'+'%03d'%k)]))
-                        self.scnName.append(QtGui.QTreeWidgetItem([('sc'+'%03d'%i)]).text(0))
+                        #self.scnName.append(QtGui.QTreeWidgetItem([('sc'+'%03d'%k)]).text(0))
+                        
                         continue
                     else:
-                        self.shtName.append(QtGui.QTreeWidgetItem(selectedItems[0],[('sh'+'%03d'%k)]))
+                        QtGui.QTreeWidgetItem(selectedItems[0],[('sh'+'%03d'%k)])
+                        #self.shtName.append(QtGui.QTreeWidgetItem(selectedItems[0],[('sh'+'%03d'%k)]))
             else:
                 assert (len(selectedItems) > 0), "Nothing is selected!"
 
@@ -164,11 +178,19 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
         if response == QtGui.QMessageBox.Yes:
             self.makeCSV()
             msgBox = QtGui.QMessageBox()
-            msgBox.setWindowTitle("Information")
-            msgBox.setIcon(QtGui.QMessageBox.Information)
-            msgBox.setText("Your data has been submitted!")
-            msgBox.setInformativeText("A CSV file has been generated in your local drive.")
-            response = msgBox.exec_()
+            msgBox.setWindowTitle("Action is not available")
+            msgBox.setIcon(QtGui.QMessageBox.Critical)
+            msgBox.setText("Application is not accessible.")
+            msgBox.setInformativeText("Access is denied.")
+            msgBox.addButton(msgBox.Retry)
+            retry = msgBox.exec_()
+            if retry == QtGui.QMessageBox.Retry:
+                replyBox = QtGui.QMessageBox()
+                replyBox.setWindowTitle("Information")
+                replyBox.setIcon(QtGui.QMessageBox.Information)
+                replyBox.setText("Just Kidding ;)")
+                replyBox.setInformativeText("Your data has been submitted. \n A CSV file has been generated in your local drive.")
+                reply = replyBox.exec_()
             self.close()
             
         elif response == QtGui.QMessageBox.No:
@@ -193,18 +215,39 @@ class Window(QtGui.QMainWindow,Ui_MainWindow):
         response = msgBox.exec_()
 
         if response == QtGui.QMessageBox.Yes:
+            msgBox = QtGui.QMessageBox()
+            msgBox.setWindowTitle("Warning")
+            msgBox.setIcon(QtGui.QMessageBox.Warning)
+            msgBox.setText("You're fired for quitting!")
+            response = msgBox.exec_()
             self.close()
+            
         elif response == QtGui.QMessageBox.No:
             msgBox = QtGui.QMessageBox()
             msgBox.setWindowTitle("Warning")
             msgBox.setIcon(QtGui.QMessageBox.Warning)
-            msgBox.setText("You're fired!")
+            msgBox.setText("Wrong answer!")
             response = msgBox.exec_()
         else:
             print "Choose wisely" #This should not happen
 
     def onReset(self):
         self.seqTree.clear()
+
+    count = 10
+    def countdown():
+        global count
+        if count < 1:
+            count = 10
+        now = datetime.datetime.now()
+        msgBox = QtGui.QMessageBox()
+        msgBox.setWindowTitle("Warning")
+        msgBox.setIcon(QtGui.QMessageBox.Warning)
+        msgBox.setText('Restarting Windows in %s'%count)
+        count = count - 1
+        response = msgBox.exec_()
+
+    
 
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
